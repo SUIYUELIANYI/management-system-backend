@@ -6,8 +6,9 @@ import (
 	"time"
 
 	"management-system/common/xerr"
-	"management-system/service/user/cmd/api/internal/svc"
-	"management-system/service/user/cmd/api/internal/types"
+	"management-system/service/app/api/internal/svc"
+	"management-system/service/app/api/internal/types"
+	"management-system/service/app/models"
 	"management-system/service/user/model"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -57,20 +58,20 @@ func (l *WXMiniAuthLogic) WXMiniAuth(req *types.WXMiniAuthReq) (resp *types.WXMi
 	fmt.Println("头像地址", userData.AvatarURL)
 	fmt.Println("OpenID", userData.OpenID)
 	fmt.Println("电话", userData.PhoneNumber)
-	fmt.Println("access_token",authResult.SessionKey)
-	
-	GetPhoneNumberResponse,err := miniprogram.GetAuth().GetPhoneNumber(req.Code)
+	fmt.Println("access_token", authResult.SessionKey)
+
+	GetPhoneNumberResponse, err := miniprogram.GetAuth().GetPhoneNumber(req.Code)
 	if err != nil {
-		return nil,errors.Wrapf(ErrWxMiniAuthFailError, "解析电话请求失败 err : %v , code : %s  , authResult : %+v", err, req.Code, authResult)
+		return nil, errors.Wrapf(ErrWxMiniAuthFailError, "解析电话请求失败 err : %v , code : %s  , authResult : %+v", err, req.Code, authResult)
 	}
-	
+
 	userData.PhoneNumber = GetPhoneNumberResponse.PhoneInfo.PhoneNumber
-	
+
 	//3、bind user or login.
 	var userId int64
 	// 如果是下面这行报错，请查看你的UsersAuthModel有没有添加到svc中的函数中去
 	userAuthInfo, err := l.svcCtx.UsersAuthModel.FindOneByAuthTypeAuthKey(l.ctx, authResult.OpenID, model.UserAuthTypeSmallWX)
-	if err != nil && err != model.ErrNotFound{
+	if err != nil && err != models.ErrNotFound {
 		return nil, errors.Wrapf(ErrWxMiniAuthFailError, "rpc call userAuthByAuthKey err : %v , authResult : %+v", err, authResult)
 	}
 
@@ -84,7 +85,7 @@ func (l *WXMiniAuthLogic) WXMiniAuth(req *types.WXMiniAuthReq) (resp *types.WXMi
 		userName := fmt.Sprintf("用户%s", mobile[7:])
 
 		// 创建users和usersauth数据
-		users := new(model.Users)
+		users := new(models.Users)
 		users.Mobile = mobile
 		users.Username = userName
 
@@ -92,9 +93,9 @@ func (l *WXMiniAuthLogic) WXMiniAuth(req *types.WXMiniAuthReq) (resp *types.WXMi
 			return nil, nil
 		}
 
-		usersAuth := model.UsersAuth{
+		usersAuth := models.UsersAuth{
 			AuthKey:  authResult.OpenID,
-			AuthType: model.UserAuthTypeSmallWX,
+			AuthType: models.UserAuthTypeSmallWX,
 		}
 
 		if _, err := l.svcCtx.UsersAuthModel.Insert(l.ctx, &usersAuth); err != nil {
@@ -103,7 +104,7 @@ func (l *WXMiniAuthLogic) WXMiniAuth(req *types.WXMiniAuthReq) (resp *types.WXMi
 		userInfo, err := l.svcCtx.UsersModel.FindOneByMobile(l.ctx, mobile)
 		switch err {
 		case nil:
-		case model.ErrNotFound:
+		case models.ErrNotFound:
 			return nil, errors.New("电话未注册")
 		default:
 			return nil, err

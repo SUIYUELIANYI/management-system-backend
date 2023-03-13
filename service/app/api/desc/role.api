@@ -1,0 +1,50 @@
+syntax = "v1"
+
+info(
+	title: "身份"
+	desc: "身份"
+	author: "qianren"
+	email: "1911401642@qq.com"
+)
+
+type (
+    OrderChangeInfo {
+        CreateTime     int64    `json:"createTime"`     // 变动身份时间
+        OperatorId     int64    `json:"operatorId"`     // 操作人
+        NewRole        int64    `json:"newRole"`        // 新身份 '身份 0-申请队员 1-岗前培训 2-见习队员 3-正式队员 4-督导老师 5-区域负责人 6-组委会 7-主任'
+        OldRole        int64    `json:"oldRole"`        // 旧身份
+    }
+    RoleChangeInfoListReq {
+        UserId      int64       `json:"userId"`
+    }
+    RoleChangeInfoListResp {
+        List    [] OrderChangeInfo  `json:"list"`
+    }
+)
+
+type (
+    ChangeRoleReq {
+        UserId      int64   `json:"userId"`
+        NewRole     int64   `json:"newRole"`
+    }
+    ChangeRoleResp {
+        CreateTime     int64    `json:"createTime"`     // 变动身份时间
+        NewRole        int64    `json:"newRole"`        // 新身份 '身份 0-申请队员 1-岗前培训 2-见习队员 3-正式队员 4-督导老师 5-区域负责人 6-组委会 7-主任'
+        OldRole        int64    `json:"oldRole"`        // 旧身份
+    }
+)
+
+@server(
+    prefix: api/v1
+    group: role
+    jwt: JwtAuth
+)
+service app-api {
+    @doc "get user order change info"
+	@handler orderChangeList
+	post /order/viewchangelist (RoleChangeInfoListReq) returns (RoleChangeInfoListResp)
+
+    @doc "change user's role"
+	@handler changeOrder
+	post /order/change (ChangeRoleReq) returns (ChangeRoleResp)
+}

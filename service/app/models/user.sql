@@ -10,14 +10,12 @@ CREATE TABLE `users`(
     `mobile`      char(11) NOT NULL DEFAULT '' COMMENT '电话',
     `username`    varchar(50) NOT NULL DEFAULT '' COMMENT '用户名称',
     `password`    varchar(50) NOT NULL DEFAULT '' COMMENT '用户密码',
-    `realname`    varchar(255) NOT NULL DEFAULT '' COMMENT '真实姓名',
-    `sex`         tinyint(1) NOT NULL DEFAULT '0' COMMENT '性别 0:男 1:女',
+    `sex`         int NOT NULL DEFAULT '0' COMMENT '性别 0:男 1:女',
     `email`       varchar(50) NOT NULL DEFAULT '' COMMENT '邮箱',
-    `role`        int NOT NULL DEFAULT '0' COMMENT '用户身份 0-申请队员 1-岗前培训 2-见习队员 3-正式队员 4-督导老师 5-区域负责人 6-组委会 7-主任',
+    `role`        int NOT NULL DEFAULT '0' COMMENT '身份 0-申请队员 1-岗前培训 2-见习队员 3-正式队员 4-督导老师 5-区域负责人 6-组委会 7-主任',
     `avatar`      varchar(255) NOT NULL DEFAULT '0' COMMENT '头像',
     `address`     varchar(255) NOT NULL DEFAULT '0' COMMENT '地址',
-    `birthday`    varchar(255) NOT NULL DEFAULT '0' COMMENT '生日',
-    `info`        varchar(255) NOT NULL DEFAULT '0' COMMENT '信息',
+    `birthday`    varchar(20) NOT NULL DEFAULT '0000-00-00' COMMENT '生日 xxxx-xx-xx',
     PRIMARY KEY(`id`),
     UNIQUE KEY `idx_mobile` (`mobile`) 
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';

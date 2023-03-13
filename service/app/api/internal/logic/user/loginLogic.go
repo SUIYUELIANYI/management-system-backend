@@ -2,17 +2,17 @@ package user
 
 import (
 	"context"
-
 	"fmt"
 	"strings"
 	"time"
 
-	"management-system/service/user/cmd/api/internal/svc"
-	"management-system/service/user/cmd/api/internal/types"
-	"management-system/service/user/model"
+	"management-system/common/utils"
+	"management-system/response"
+	"management-system/service/app/api/internal/svc"
+	"management-system/service/app/api/internal/types"
+	"management-system/service/app/models"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -32,20 +32,20 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err error) {
 	if len(strings.TrimSpace(req.Mobile)) == 0 || len(strings.TrimSpace(req.Password)) == 0 {
-		return nil, errors.New("参数错误")
+		return nil, response.Error(401, "参数错误")
 	}
 
 	userInfo, err := l.svcCtx.UsersModel.FindOneByMobile(l.ctx, req.Mobile)
 	switch err {
 	case nil:
-	case model.ErrNotFound:
-		return nil, errors.New("电话未注册")
+	case models.ErrNotFound:
+		return nil, response.Error(401, "电话号码不存在")
 	default:
 		return nil, err
 	}
 
-	if userInfo.Password != req.Password {
-		return nil, errors.New("用户密码不正确")
+	if userInfo.Password != utils.Md5ByString(req.Password) {
+		return nil, response.Error(401, "用户密码不正确")
 	}
 
 	// ---start---
