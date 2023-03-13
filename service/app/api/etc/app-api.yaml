@@ -11,5 +11,5 @@ JwtAuth:
   AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0
   AccessExpire: 31536000
 WxMiniConf:
-  AppId: wx370d63f27156ce68
-  AppSecret: eab04da47e10d0306c042fddd483b6a5
+  AppId: 
+  AppSecret: 
