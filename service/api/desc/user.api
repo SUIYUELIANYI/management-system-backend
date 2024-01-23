@@ -1,0 +1,317 @@
+// 根据api文件自动生成代码：goctl api go -api user.api -dir ../  --style=goZero
+// 格式化api文件：goctl api format --dir user.api
+// api文件规范详情见：https://go-zero.dev/docs/reference和https://go-zero.dev/docs/tutorials
+syntax = "v1"
+
+info(
+	title: "用户"
+	desc: "用户"
+	author: "qianren"
+	email: "1911401642@qq.com"
+)
+
+type User {
+	Id       int64  `json:"id"`
+	Mobile   string `json:"mobile"`
+	Username string `json:"username"`
+	Sex      int64  `json:"sex"`
+	Email    string `json:"email"`
+	Role     int64  `json:"role"`
+	Avatar   string `json:"avatar"`
+	Address  string `json:"address"`
+	Birthday string `json:"birthday"`
+}
+
+// 由于微信官方文档返回的PhoneInfo结构体中嵌套了一个WaterMark结构体，而api文档中struct是作为关键字，结构体中不得使用Golang关键字作为标识符
+// 故单独设置一个WaterMark结构体
+type WaterMark {
+	Timestamp int64  `json:"timestamp"`
+	AppID     string `json:"appid"`
+}
+
+type PhoneInfo {
+	PhoneNumber     string    `json:"phone_number"`      // 用户绑定的手机号
+	PurePhoneNumber string    `json:"pure_phone_number"` // 没有区号的手机号
+	CountryCode     string    `json:"country_code"`      // 区号
+	WaterMark       WaterMark `json:"watermark"`         // 数据水印
+}
+
+type (
+	// 定义注册接口的json请求体
+	RegisterReq {
+		Mobile   string `json:"mobile"`
+		Password string `json:"password"`
+	}
+	// 定义注册接口的json响应体
+	RegisterResp {
+		AccessToken  string `json:"access_token"`
+		AccessExpire int64  `json:"access_expire"`
+		RefreshAfter int64  `json:"refresh_after"`
+		Role         int64  `json:"role"`
+	}
+)
+
+type (
+	LoginReq {
+		Mobile   string `json:"mobile"`
+		Password string `json:"password"`
+	}
+	LoginResp {
+		AccessToken  string `json:"access_token"`
+		AccessExpire int64  `json:"access_expire"`
+		RefreshAfter int64  `json:"refresh_after"`
+		Role         int64  `json:"role"`
+	}
+)
+
+type (
+	WXMiniAuthReq {
+		Code        string `json:"code"`
+		PhoneNumber string `json:"phone_number"`
+	}
+	WXMiniAuthResp {
+		AccessToken  string `json:"access_token"`
+		AccessExpire int64  `json:"access_expire"`
+		RefreshAfter int64  `json:"refresh_after"`
+		Role         int64  `json:"role"`
+	}
+)
+
+type (
+	GetPhoneNumberReq {
+		Code string `json:"code"` // getPhoneNumber(前端调用的函数)返回的code与wx.login返回的code作用不一样
+	}
+	GetPhoneNumberResp {
+		PhoneInfo PhoneInfo `json:"phone_info"`
+	}
+)
+
+type (
+	UserInfoResp {
+		UserInfo User `json:"user_info"`
+	}
+)
+
+type (
+	GetUserInfoReq {
+		UserId int64 `json:"user_id"`
+	}
+)
+
+type (
+	GetAllUserInfoReq {
+		Page     int64 `json:"page"`
+		PageSize int64 `json:"page_size"`
+	}
+	GetAllUserInfoResp {
+		List []User `json:"list"`
+	}
+)
+
+type (
+	UploadAvatarResp {
+		Url string `json:"url"`
+	}
+)
+
+type (
+	ImportExcelResp {
+		List []User `json:"list"`
+	}
+)
+
+type (
+	EditUserInfoReq {
+		Mobile   string `json:"mobile"`
+		Username string `json:"username"`
+		Sex      int64  `json:"sex"`
+		Email    string `json:"email"`
+		Address  string `json:"address"`
+		Birthday string `json:"birthday"`
+	}
+)
+
+type (
+	GetAccessTokenResp {
+		AccessToken string `json:"access_token"`
+		// ExpiresIn   int64  `json:"expires_in"`
+	}
+)
+
+type (
+	GetAllUserInfoByRoleReq {
+		Page     int64 `json:"page"`
+		PageSize int64 `json:"page_size"`
+		Role     int64 `json:"role"`
+	}
+	GetAllUserInfoByRoleResp {
+		List []User `json:"list"`
+	}
+)
+
+type (
+	GetTrainingUserInfoByMobileReq {
+		Page     int64  `json:"page"`
+		PageSize int64  `json:"page_size"`
+		Mobile   string `json:"mobile"`
+	}
+	GetTrainingUserInfoByMobileResp {
+		UserInfo User `json:"user_info"`
+	}
+)
+
+type (
+	RescueDurationResp {
+		RescueDuration string `json:"rescue_duration"`
+	}
+)
+
+type (
+	RescueFrequencyResp {
+		RescueFrequency int64 `json:"rescue_frequency"`
+	}
+)
+type (
+	GetUserRescueDurationReq {
+		UserId int64 `json:"user_id"`
+	}
+	GetUserRescueDurationResp {
+		RescueDuration string `json:"rescue_duration"`
+	}
+)
+
+type (
+	GetUserRescueFrequencyReq {
+		UserId int64 `json:"user_id"`
+	}
+	GetUserRescueFrequencyResp {
+		RescueFrequency int64 `json:"rescue_frequency"`
+	}
+)
+
+// ==============> user <============
+// no need login
+@server(
+	prefix: api/v1
+	group: user
+)
+service app-api {
+	@doc "注册"
+	@handler register
+	post /user/register (RegisterReq) returns (RegisterResp)
+	
+	@doc "登录"
+	@handler login
+	post /user/login (LoginReq) returns (LoginResp)
+	
+	@doc (
+		summary: "微信认证登录"
+		description: "调用wx.login获取code，调用获取电话号码接口获取手机号。"
+	)
+	@handler WXMiniAuth
+	post /user/wxMiniAuth (WXMiniAuthReq) returns (WXMiniAuthResp)
+	
+	@doc (
+		summary: "Excel导入用户账号信息"
+		description: "用户需要注册账号后才能导入个人信息。"
+	)
+	@handler importExcel
+	post /user/importexcel returns (ImportExcelResp)
+	
+	@doc (
+		summary: "获取电话号码"
+		description: "客户端调用getPhoneNumber返回code，将code传给服务端调用官方接口返回电话信息。"
+	)
+	@handler  getPhoneNumber
+	post /user/phonenumber (GetPhoneNumberReq) returns (GetPhoneNumberResp)
+	
+	@doc (
+		summary: "获取接口调用凭证"
+		description: "不需要传参数，服务端直接调用接口返回access_token，官方设置过期时间为7200s（2小时）。"
+	)
+	@handler getAccessToken
+	post /user/accesstoken  returns(GetAccessTokenResp)
+}
+
+// need login
+@server(
+	prefix: api/v1
+	group: user
+	jwt: JwtAuth
+)
+service app-api {
+	@doc (
+		summary: "获取个人信息"
+		description: "需要token，不需要Body参数，返回token对应用户的个人信息。"
+	)
+	@handler userInfo
+	post /user/info  returns (UserInfoResp)
+	
+	@doc (
+		summary: "上传头像"
+		description: "需要token，Body设置form-data参数名为file，参数类型为file。"
+	)
+	@handler uploadAvatar
+	post /user/uploadavatar returns (UploadAvatarResp)
+	
+	@doc "修改个人信息"
+	@handler editUserInfo
+	post /user/edit (EditUserInfoReq)
+	
+	@doc(
+		summary: "获取所有用户信息"
+		description: "需要token，Body不设置参数。不限制权限。"
+	)
+	@handler getAllUserInfo
+	post /user/all  (GetAllUserInfoReq) returns (GetAllUserInfoResp)
+	
+	@doc (
+		summary: "获取用户信息"
+		description: "需要token，返回user_id对应的用户信息。"
+	)
+	@handler getUserInfo
+	post /user/id (GetUserInfoReq) returns (UserInfoResp)
+	
+	@doc(
+		summary: "获取所有用户信息（按身份）"
+		description: "不推荐查询申请队员和非在册队员，因为他们还没有完整的用户信息。
+		-1-待处理人员 0-非在册队员 1-申请队员 2-岗前培训 3-见习队员 4-正式队员 5-督导老师 6-树洞之友 40-普通队员 41-核心队员 42-区域负责人 43-组委会成员 44-组委会主任"
+	)
+	@handler getAllUserInfoByRole
+	post /user/role (GetAllUserInfoByRoleReq) returns (GetAllUserInfoByRoleResp)
+	
+	@doc(
+		summary: "获取岗前培训用户信息（按电话）"
+		description: ""
+	)
+	@handler  getTrainingUserInfoByMobile
+	post /user/trainging (GetTrainingUserInfoByMobileReq) returns (GetTrainingUserInfoByMobileResp)
+	
+	@doc(
+		summary: "查看个人救援时长"
+		description: "需要token，不需要Body参数，查看用户自己的救援时长。"
+	)
+	@handler rescueDuration
+	post /user/rescueduration  returns (RescueDurationResp)
+	
+	@doc(
+		summary: "查看个人救援次数"
+		description: "需要token，不需要Body参数，查看用户自己的救援次数"
+	)
+	@handler rescueFrequency
+	post /user/rescuefrequency returns (RescueFrequencyResp)
+	@doc(
+		summary: "查看用户救援时长"
+		description: "需要token，Body参数需要查看用户的id，返回该用户的救援时长。"
+		
+	)
+	@handler getUserRescueDuration
+	post /user/getresuceduration  (GetUserRescueDurationReq) returns (GetUserRescueDurationResp)
+	
+	@doc(
+		summary: "查看用户救援次数"
+		description: "需要token，Body参数需要查看用户的id，返回该用户的救援次数。"
+	)
+	@handler  getUserRescueFrequency
+	post /user/getrescuefrequency (GetUserRescueFrequencyReq) returns (GetUserRescueFrequencyResp)
+}

@@ -1,0 +1,143 @@
+// 格式化api文件：goctl api format --dir application.api
+syntax = "v1"
+
+info(
+	title: "申请表"
+	desc: "申请表"
+	author: "qianren"
+	email: "1911401642@qq.com"
+)
+
+type ApplicationForm {
+	Id                    int64  `json:"id"`
+	CreateTime            string `json:"create_time"`
+	UpdateTime            string `json:"update_time"`
+	UserId                int64  `json:"user_id"`
+	Mobile                string `json:"mobile"`
+	Username              string `json:"username"`
+	Sex                   int64  `json:"sex"`
+	Email                 string `json:"email"`
+	Address               string `json:"address"`
+	Birthday              string `json:"birthday"`
+	Status                int64  `json:"status"`
+	RegionalHeadId        int64  `json:"regional_head_id"`
+	OrganizingCommitteeId int64  `json:"organizing_committee_id"`
+	SubmissionTime        int64  `json:"submission_time"`
+}
+
+type (
+	// 定义查看申请表（个人）接口的json请求体
+	FormResp {
+		Form ApplicationForm `json:"application_form"`
+	}
+)
+
+type (
+	FormsReq {
+		Page     int64 `json:"page"`
+		PageSize int64 `json:"page_size"`
+	}
+	FormsResp {
+		List []ApplicationForm `json:"list"`
+	}
+)
+
+type (
+	GetByAddressReq {
+		Address  string `json:"address"`
+		Page     int64  `json:"page"`
+		PageSize int64  `json:"page_size"`
+	}
+)
+
+type (
+	ProcessReq {
+		ApplicationFormId int64 `json:"application_form_id"`
+		Result            int64 `json:"result"` // 审批结果 0-未通过 1-通过
+	}
+)
+
+type (
+	ProcessWithSubscribeReq {
+		ApplicationFormId int64  `json:"application_form_id"`
+		Result            int64  `json:"result"` // 审批结果 0-未通过 1-通过
+		AccessToken       string `json:"access_token"`
+	}
+)
+type (
+	GetByStatusReq {
+		Status   int64 `json:"status"`
+		Page     int64 `json:"page"`
+		PageSize int64 `json:"page_size"`
+	}
+	GetByStatusResp {
+		List []ApplicationForm `json:"list"`
+	}
+)
+
+type (
+	EditReq {
+		Mobile   string `json:"mobile"`
+		Username string `json:"username"`
+		Sex      int64  `json:"sex"`
+		Address  string `json:"address"`
+		Birthday string `json:"birthday"`
+		Email    string `json:"email"`
+	}
+)
+
+@server(
+	prefix: api/v1
+	group: application
+	jwt: JwtAuth
+)
+service app-api {
+	@doc (
+		summary: "查看申请表（仅限个人）"
+		description: "需要token，返回申请表信息，含姓名、手机号、出生日期、省市、性别、邮箱"
+	)
+	@handler getOwnForm
+	post /application/form returns (FormResp)
+	
+	@doc (
+		summary: "提交/修改申请表"
+		description: "仅限提交/修改不通过时且提交次数在3次以内"
+	)
+	@handler editForm
+	post /application/edit (EditReq)
+	
+	@doc (
+		summary: "查看申请表（仅限区域负责人和组织管理委员会）"
+		description: "仅限区域负责人和组织管理委员会。区域负责人看到的是status=0的申请表，组织管理委员会查看的是status=1的申请表，也就是区域负责人通过后的申请表。"
+	)
+	@handler getAllForm
+	post /application/forms (FormsReq) returns (FormsResp)
+	
+	@doc (
+		summary: "查看申请表（按省份）"
+		description: "仅限区域负责人和组织管理委员会。地址格式为省份-城市，如湖北-武汉，由于按省份，采用前两个字符匹配。"
+	)
+	@handler getFormByAddress
+	post /application/address (GetByAddressReq) returns (FormsResp)
+	
+	@doc (
+		summary: "审批申请表（不包含订阅消息）"
+		description: "仅限区域负责人和组织管理委员会，审批结果 0-不通过 1-通过，区域负责人通过后申请表状态为1，组织管理委员会通过后申请表状态为2。"
+	)
+	@handler process
+	post /application/process (ProcessReq)
+	
+	@doc (
+		summary:"审批申请表（包含订阅消息）"
+		description: "仅限区域负责人和组织管理委员会，审批结果 0-不通过 1-通过，区域负责人通过后申请表状态为1，组织管理委员会通过后申请表状态为2。只有在不通过和组委会通过的情况下会发送订阅，且如果该微信用户没有订阅消息，无法成功调用。"
+	)
+	@handler processWithSubscribe
+	post /application/processwithsubscribe (ProcessWithSubscribeReq)
+	
+	@doc (
+		summary:"查看申请表（按申请表状态）"
+		description: "无限制权限，用于测试 （0-待审批 1-区域负责人通过 2-组织管理委员会通过 3-未通过）。"
+	)
+	@handler getFormByStatus
+	post /application/status (GetByStatusReq) returns (GetByStatusResp)
+}

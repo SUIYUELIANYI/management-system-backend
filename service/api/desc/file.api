@@ -1,0 +1,219 @@
+// 格式化：goctl api format --dir file.api
+syntax = "v1"
+
+info(
+	title: "文件"
+	desc: "主要是视频文件上传"
+	author: "qianren"
+	email: "1911401642@qq.com"
+)
+
+type File {
+	Id         int64  `json:"id"`
+	CreateTime string `json:"create_time"`
+	UpdateTime string `json:"update_time"`
+	FileName   string `json:"file_name"`
+	FolderId   int64  `json:"folder_id"`
+	Url        string `json:"url"`
+}
+
+type Folder {
+	Id         int64  `json:"id"`
+	CreateTime string `json:"create_time"`
+	UpdateTime string `json:"update_time"`
+	FolderName string `json:"folder_name"`
+	Role       int64  `json:"role"`
+}
+
+type ViewingRecord {
+	Id         int64  `json:"id"`
+	CreateTime string `json:"create_time"`
+	UpdateTime string `json:"update_time"`
+	UserId     int64  `json:"user_id"`
+	Username   string `json:"username"`
+	FileId     int64  `json:"file_id"`
+	FileName   string `json:"file_name"`
+	Duration   int64 `json:"duration"` // 观看时间（多次观看取最大值）
+}
+
+type (
+	UploadVideoUrlReq {
+		Url      string `json:"url"`
+		FileName string `json:"file_name"`
+		FolderId int64  `json:"folder_id"`
+	}
+)
+
+type (
+	UploadVideoResp {
+		VideoId int64  `json:"video_id"`
+		Url     string `json:"url"`
+	}
+)
+
+type (
+	AddFolderReq {
+		FolderName string `json:"folder_name"`
+		Role       int64  `json:"role"`
+	}
+)
+
+type (
+	GetFolderReq {
+		Page     int64 `json:"page"`
+		PageSize int64 `json:"page_size"`
+	}
+	GetFolderResp {
+		List []Folder `json:"folder"`
+	}
+)
+
+type (
+	GetVideoReq {
+		FolderId int64 `json:"folder_id"`
+		Page     int64 `json:"page"`
+		PageSize int64 `json:"page_size"`
+	}
+	GetVideoResp {
+		List []File `json:"list"`
+	}
+)
+
+type (
+	EditFolderReq {
+		FolderId   int64  `json:"folder_id"`
+		FolderName string `json:"folder_name"`
+		Role       int64  `json:"role"`
+	}
+)
+
+type (
+	EditVideoReq {
+		VideoId  int64  `json:"video_id"`
+		FileName string `json:"file_name"`
+		FolderId int64  `json:"folder_id"`
+	}
+)
+
+type (
+	SubmitViewingRecordReq {
+		FileId   int64 `json:"file_id"`
+		Duration int64 `json:"duration"`
+	}
+)
+
+type (
+	GetViewingRecordReq {
+		Page     int64 `json:"page"`
+		PageSize int64 `json:"page_size"`
+	}
+	GetViewingRecordResp {
+		List []ViewingRecord `json:"viewing_record"`
+	}
+)
+
+type (
+	GetQiNiuTokenResp {
+		Token string `json:"token"`
+	}
+)
+
+type (
+	DeleteFolderReq {
+		FolderId int64 `json:"folder_id"`
+	}
+)
+
+type (
+	DeleteFileReq {
+		FileId int64 `json:"file_id"`
+	}
+)
+
+@server(
+	prefix: api/v1
+	group: file
+	jwt: JwtAuth
+)
+service app-api{
+	@doc(
+		summary: "提交课程视频"
+		description: "body使用form-data格式，需要三个参数，file-文件，fileName-文件名，folderId-文件夹id，后面两个参数都为string类型，文件就是file类型。"
+	)
+	@handler uploadVideo
+	post /file/uploadvideo returns (UploadVideoResp)
+	
+	@doc(
+		summary: "提交课程视频（传url）"
+		description:"前端先拿到token后上传文件，然后将url和文件名，文件夹id一起上传创建视频。"
+	)
+	@handler uploadVideoUrl
+	post /file/uploadVideoUrl (UploadVideoUrlReq)
+	
+	@doc(
+		summary: "添加文件夹"
+	)
+	@handler addFolder
+	post /file/addfolder (AddFolderReq)
+	
+	@doc(
+		summary: "查看文件夹"
+		description:"返回满足权限的所有文件夹。"
+	)
+	@handler getFolder
+	post /file/getfolder (GetFolderReq) returns (GetFolderResp)
+	
+	@doc(
+		summary: "查看视频"
+		description:"只能查看身份小于等于自身的视频"
+	)
+	@handler getVideo
+	post /file/getvideo (GetVideoReq)returns (GetVideoResp)
+	
+	@doc(
+		summary: "修改文件夹信息"
+	)
+	@handler editFolder
+	post /file/editfolder (EditFolderReq)
+	
+	@doc(
+		summary: "修改视频信息"
+		description:"0-非在册队员 1-申请队员 2-岗前培训 3-见习队员 4-正式队员 5-督导老师 6-树洞之友 40-普通队员 41-核心队员 42-区域负责人 43-组委会成员 44-组委会主任'"
+	)
+	@handler editVideo
+	post /file/editvideo (EditVideoReq)
+	
+	@doc(
+		summary: "提交视频观看记录"
+		description: "时间格式为：0000-00-00 00:00:00"
+	)
+	@handler submitViewingRecord
+	post /file/submitviewingrecord (SubmitViewingRecordReq)
+	
+	@doc(
+		summary: "查看视频观看记录"
+	)
+	@handler getViewingRecord
+	post /file/getviewingrecord (GetViewingRecordReq)returns (GetViewingRecordResp)
+	
+	@doc(
+		summary: "获取七牛云token"
+		description: "该token用于直接上传文件"
+	)
+	@handler getQiNiuToken
+	post /file/getqiniutoken returns (GetQiNiuTokenResp)
+	
+	@doc(
+		summary: "删除文件夹"
+		description: "软删除"
+	)
+	@handler deleteFolder
+	post /file/deletefolder (DeleteFolderReq)
+	
+	@doc(
+		summary: "删除文件"
+		description: "软删除"
+	)
+	@handler deleteFile
+	post /file/deletefile (DeleteFileReq)
+}

@@ -1,0 +1,49 @@
+// 格式化api文件：goctl api format --dir role.api
+syntax = "v1"
+
+info(
+	title: "身份"
+	desc: "身份"
+	author: "qianren"
+	email: "1911401642@qq.com"
+)
+
+type (
+	RoleChangeInfo {
+		Id           int64  `json:"id"`
+		CreateTime   string `json:"create_time"`   // 变动身份时间
+		UserId       int64  `json:"user_id"`       // 身份变动用户Id
+		OperatorId   int64  `json:"operator_id"`   // 操作人Id
+		NewRole      int64  `json:"new_role"`      // 新身份 '0-申请队员 1-岗前培训 2-见习队员 3-正式队员 4-督导老师 30-普通队员 31-核心队员 32-区域负责人 33-组委会成员 34-组委会主任'
+		OldRole      int64  `json:"old_role"`      // 旧身份
+	}
+	RoleChangeInfoListReq {
+		UserId int64 `json:"user_id"`
+	}
+	RoleChangeInfoListResp {
+		List []RoleChangeInfo `json:"list"`
+	}
+)
+
+type (
+	ChangeRoleReq {
+		UserId  int64 `json:"user_id"`
+		NewRole int64 `json:"new_role"`
+	}
+)
+
+@server(
+	prefix: api/v1
+	group: role
+	jwt: JwtAuth
+)
+service app-api {
+	
+	@doc "获取某个成员的身份变动信息"
+	@handler roleChangeList
+	post /role/viewchangelist (RoleChangeInfoListReq) returns (RoleChangeInfoListResp)
+	
+	@doc "更改成员身份"
+	@handler changeRole
+	post /role/change (ChangeRoleReq)
+}

@@ -1,0 +1,78 @@
+// 格式化：goctl api format --dir exam.api
+syntax = "v1"
+
+info(
+	title: "培训考试"
+	desc: "岗前培训包含主观题和客观题，客观题可以无限制考试直到合格，客观题连续三次不合格移除记录至待处理人员数据库"
+	author: "qianren"
+	email: "1911401642@qq.com"
+)
+
+type Exam {
+	Id     int64  `json:"id"`
+	UserId int64  `json:"user_id"`
+	Result int64  `json:"result"`
+	Time   string `json:"time"`
+}
+
+type Grades {
+	Id     int64  `json:"id"`
+	UserId int64  `json:"user_id"`
+	Result int64  `json:"result"`
+	Time   string `json:"time"`
+	Type   string `json:"type"`
+}
+
+type (
+	EnterGradeReq {
+		UserId int64  `json:"user_id"`
+		Result int64  `json:"result"`
+		Time   string `json:"time"`
+	}
+)
+
+type (
+	GetGradesResp {
+		List []Grades `json:"list"`
+	}
+)
+
+@server(
+	prefix: api/v1
+	group: exam
+	jwt: JwtAuth
+)
+service app-api {
+	@doc (
+		summary: "提交主观题成绩（单人）"
+	)
+	@handler enterSubjective
+	post /exam/entersubjective (EnterGradeReq)
+	
+	@doc(
+		summary: "提交客观题成绩（单人）"
+	)
+	@handler enterObjective
+	post /exam/enterobjective (EnterGradeReq)
+	
+	@doc(
+		summary: "提交主观题成绩（多人）"
+		description: "导入excel文件。"
+	)
+	@handler importSubjective
+	post /exam/importsubjective
+	
+	@doc(
+		summary: "提交客观题成绩（多人）"
+		description: "导入excel文件。"
+	)
+	@handler importObjective
+	post /exam/importobjective
+	
+	@doc(
+		summary: "查询岗前培训成绩"
+		description: "需要token，不需要Body参数。"
+	)
+	@handler getGrades
+	post /exam/getgrades returns (GetGradesResp)
+}

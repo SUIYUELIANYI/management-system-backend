@@ -1,0 +1,390 @@
+// 格式化：goctl api format --dir rescue.api
+syntax = "v1"
+
+info(
+	title: "救援流程管理"
+	desc: "包含救援信息导入，救援信息推送等"
+	author: "qianren"
+	email: "1911401642@qq.com"
+)
+
+type RescueTarget {
+	Id                 int64  `json:"id"` // 救援对象id
+	CreateTime         string `json:"create_time"`
+	UpdateTime         string `json:"update_time"`
+	WeiboAddress       string `json:"weibo_address"`        // 救援对象微博地址（唯一标识）
+	Nickname           string `json:"nickname"`             // 救援对象昵称（按最新的救援信息数据）
+	Status             int64  `json:"status"`               // 救援状态（0-待救援 1-救援中 2-已救援）
+	StartTime          string `json:"start_time"`           // 救援起始时间
+	EndTime            string `json:"end_time"`             // 救援结束时间
+	RescueTeacher1Id   int64  `json:"rescue_teacher1_id"`   // 救援老师1id
+	RescueTeacher1Name string `json:"rescue_teacher1_name"` // 救援老师1姓名
+	RescueTeacher1Role int64  `json:"rescue_teacher1_role"` // 救援老师1身份
+	RescueTeacher2Id   int64  `json:"rescue_teacher2_id"`   // 救援老师2id
+	RescueTeacher2Name string `json:"rescue_teacher2_name"` // 救援老师2姓名
+	RescueTeacher2Role int64  `json:"rescue_teacher2_role"` // 救援老师2身份
+	RescueTeacher3Id   int64  `json:"rescue_teacher3_id"`   // 救援老师3id
+	RescueTeacher3Name string `json:"rescue_teacher3_name"` // 救援老师3姓名
+	RescueTeacher3Role int64  `json:"rescue_teacher3_role"` // 救援老师3身份
+	Description        string `json:"description"`          // 救援过程描述
+	Evaluation         string `json:"evalutaion"`           // 最终评价
+}
+
+type RescueInfo {
+	Id                int64  `json:"id"`
+	CreateTime        string `json:"create_time"` // 救援信息在数据库中的创建时间，相当于管理员导入的时间
+	UpdateTime        string `json:"update_time"`
+	RescueTargetId    int64  `json:"rescue_target_id"` // 本条救援信息所属救援对象的id
+	ReleaseTime       string `json:"release_time"`     // 此条微博的发布时间
+	WeiboAccount      string `json:"weibo_account"`
+	WeiboAddress      string `json:"weibo_address"`
+	Nickname          string `json:"nickname"`
+	RiskLevel         string `json:"risk_level"`
+	Area              string `json:"area"`
+	Sex               int64  `json:"sex"`
+	Birthday          string `json:"birthday"`
+	BriefIntroduction string `json:"brief_introduction"`
+	Text              string `json:"text"`
+}
+
+type RescueProcess {
+	Id              int64  `json:"id"`
+	CreateTime      string `json:"create_time"`
+	UpdateTime      string `json:"update_time"`
+	RescueTeacherId int64  `json:"rescue_teacher_id"`
+	RescueInfoId    int64  `json:"rescue_info_id"`
+	StartTime       string `json:"start_time"` // 本次救援起始时间
+	EndTime         string `json:"end_time"`   // 本次救援结束时间
+	Duration        string `json:"duration"`   // 时长（系统计算）
+	Evaluation      string `json:"evaluation"` // 评价
+}
+
+type Signature {
+	Id                int64  `json:"id"`
+	CreateTime        string `json:"create_time"`
+	UpdateTime        string `json:"update_time"`
+	RescueTeacherId   int64  `json:"rescue_teacher_id"`
+	RescueTeacherName string `json:"rescue_teacher_name"`
+	RescueTeacherRole int64  `json:"rescue_teacher_role"`
+	RescueTargetId    int64  `json:"rescue_target_id"`
+	Image             string `json:"image"`
+}
+
+type Area {
+	Name            string `json:"name"`             // 省份名称
+	RescueFrequency int64  `json:"rescue_frequency"` // 救援次数
+}
+
+type (
+	AreaRescueFrequencyResp {
+		List []Area `json:"list"`
+	}
+)
+
+type Year {
+	Name            string `json:"name"`             // 年份
+	RescueFrequency int64  `json:"rescue_frequency"` // 救援次数
+}
+
+type (
+	YearRescueFrequencyResp {
+		List []Year `json:"list"`
+	}
+)
+
+type (
+	// 发布单条救援信息接口的json请求体
+	ReleaseRescueInfoReq {
+		ReleaseTime       string `json:"release_time"`       // 此条微博的发布时间
+		WeiboAccount      string `json:"weibo_account"`      // 微博账户
+		WeiboAddress      string `json:"weibo_address"`      // 微博地址
+		Nickname          string `json:"nickname"`           // 昵称
+		RiskLevel         string `json:"risk_level"`         // 危险级别
+		Area              string `json:"area"`               // 所在城市
+		Sex               int64  `json:"sex"`                // 性别
+		Birthday          string `json:"birthday"`           // 生日
+		BriefIntroduction string `json:"brief_introduction"` // 简介
+		Text              string `json:"text"`               // 信息原文
+		Flag              int64  `json:"flag"`               // 是否发布订阅消息
+	}
+)
+
+type (
+	AuthReq {
+		Mobile   string `json:"mobile"`
+		Password string `json:"password"`
+	}
+	AuthResp {
+		AccessToken  string `json:"access_token"`
+		AccessExpire int64  `json:"access_expire"`
+		RefreshAfter int64  `json:"refresh_after"`
+	}
+)
+
+type (
+	// 定义查看救援信息的json请求体
+	RescueInfosReq {
+		Page     int64 `json:"page"`
+		PageSize int64 `json:"page_size"`
+	}
+	// 定义查看救援新的json返回体
+	RescueInfosResp {
+		List []RescueInfo `json:"list"`
+	}
+)
+
+type (
+	GetRescueInfoByAddressReq {
+		Address  string `json:"address"`
+		Page     int64  `json:"page"`
+		PageSize int64  `json:"page_size"`
+	}
+)
+
+type (
+	GetRescueInfoByRescueTargetIdReq {
+		RescueTargetId int64 `json:"rescue_target_id"`
+		Page           int64 `json:"page"`
+		PageSize       int64 `json:"page_size"`
+	}
+	GetRescueInfoByRescueTargetIdResp {
+		List []RescueInfo `json:"list"`
+	}
+)
+
+type (
+	GetRescueInfoByRescueTeacherNameReq {
+		RescueTeacherName string `json:"rescue_teacher_name"`
+		Page              int64  `json:"page"`
+		PageSize          int64  `json:"page_size"`
+	}
+	GetRescueInfoByRescueTeacherNameResp {
+		List []RescueInfo `json:"list"`
+	}
+)
+
+type (
+	ClaimRescueTargetReq {
+		RescueTargetId int64 `json:"rescue_target_id"`
+	}
+)
+
+type (
+	GetRescueTaskReq {
+		Page     int64 `json:"page"`
+		PageSize int64 `json:"page_size"`
+	}
+	GetRescueTaskResp {
+		List []RescueTarget `json:"list"`
+	}
+)
+
+type (
+	GetRescueTargetInfoReq {
+		RescueTargetId int64 `json:"rescue_target_id"`
+	}
+	GetRescueTargetInfoResp {
+		RescueTargetInfo RescueTarget `json:"rescue_target_info"`
+	}
+)
+
+type (
+	SignReq {
+		RescueTargetId int64  `json:"rescue_target_id"`
+		Image          string `json:"image"`
+	}
+)
+
+type (
+	GetSignatureReq {
+		RescueTargetId int64 `json:"rescue_target_id"`
+	}
+	GetSignatureResp {
+		List []Signature `json:"list"`
+	}
+)
+
+type (
+	RescueProcessReq {
+		RescueInfoId int64  `json:"rescue_info_id"`
+		StartTime    string `json:"start_time"`
+		EndTime      string `json:"end_time"`
+		Evaluation   string `json:"evaluation"`
+	}
+)
+
+type (
+	GetRescueProcessReq {
+		RescueInfoId int64 `json:"rescue_info_id"`
+		Page         int64 `json:"page"`
+		PageSize     int64 `json:"page_size"`
+	}
+	GetRescueProcessResp {
+		List []RescueProcess `json:"list"`
+	}
+)
+
+type (
+	SetRescueDurationThresholdReq {
+		Threshold int64 `json:"threshold"`
+	}
+)
+// ==============> rescue <============
+// no need login
+@server(
+	prefix: api/v1
+	group: rescue
+)
+service app-api {
+	@doc (
+		summary: "身份认证"
+		description: "发布救援信息需要管理员单独通过该接口用手机密码登录以获取专门用于发布救援信息的token。通过微信注册的账号默认密码为123456。且该token只能用一次，导入救援信息后立即失效。目前暂定组委会成员（role为43和44）才能通过认证。"
+	)
+	@handler authRescue
+	post /rescue/auth (AuthReq) returns (AuthResp)
+	
+	@doc(
+		summary: "销毁认证"
+		description: "将token销毁。不需要参数，直接删除缓存中的token。"
+	)
+	@handler destroyRescueToken
+	post /rescue/destroyrescuetoken
+}
+
+@server(
+	prefix: api/v1
+	group: rescue
+	jwt: JwtAuthForRescue
+)
+service app-api {
+	@doc (
+		summary: "发布救援信息"
+		description: "管理员需要携带认证后的token发布救援信息，信息发布后，志愿者收到订阅消息。"
+	)
+	@handler releaseRescueInfo
+	post /rescue/release (ReleaseRescueInfoReq)
+	
+	@doc(
+		summary: "Excel导入救援信息"
+	)
+	@handler releaseResuceInfoByExcel
+	post /rescue/releasebyexcel
+}
+
+@server(
+	prefix: api/v1
+	group: rescue
+	jwt: JwtAuth
+)
+service app-api {
+	@doc(
+		summary: "获取救援信息"
+		description: "需要token，权限至少为见习队员-3。"
+	)
+	@handler  getAllRescueInfo
+	post /rescue/infos (RescueInfosReq) returns (RescueInfosResp)
+	
+	@doc(
+		summary: "获取救援信息（未认领）"
+		description: "需要token,权限至少为见习队员-3。返回自己没有认领的，而且该救援信息的对象没有被3个人认领的救援信息。"
+	)
+	@handler getUnclaimedRescueInfo
+	post /rescue/unclaimed (RescueInfosReq) returns (RescueInfosResp)
+	
+	@doc(
+		summary: "获取救援信息（已认领且未评价）"
+		description: "需要token,权限至少为见习队员-3。返回自己已经认领的，而且没有评价过的救援信息。"
+	)
+	@handler  getClaimedRescueInfo
+	post /rescue/claimed (RescueInfosReq) returns (RescueInfosResp)
+	
+	@doc(
+		summary: "获取救援信息（按省份）"
+		description: "需要token，权限至少为见习队员-3。"
+	)
+	@handler  getRescueInfoByAddress
+	post /rescue/address (GetRescueInfoByAddressReq) returns (RescueInfosResp)
+	
+	@doc(
+		summary: "获取救援信息（按救援对象）"
+		description: "需要token，权限至少为见习队员-3。需要rescue_target_id，返回一个救援对象的所有救援信息。"
+	)
+	@handler getRescueInfoByRescueTargetId
+	post /rescue/rescuetargetid (GetRescueInfoByRescueTargetIdReq) returns (GetRescueInfoByRescueTargetIdResp)
+	
+	@doc(
+		summary: "获取救援信息（按救援老师姓名）"
+		description: "需要token，权限至少为见习队员-3。需要传救援老师姓名，使用模糊搜索，返回救援老师认领的救援对象包含的所有救援信息。"
+	)
+	@handler getRescueInfoByRescueTeacherName
+	post /rescue/rescueteachername (GetRescueInfoByRescueTeacherNameReq) returns (GetRescueInfoByRescueTeacherNameResp)
+	
+	@doc(
+		summary: "认领救援对象"
+		description: "需要token，权限至少为见习队员-3。具体流程为：志愿者获取救援信息，然后选择救援信息认领，实际上是人类救援信息对应的救援对象。"
+	)
+	@handler claimRescueTarget
+	post /rescue/claim (ClaimRescueTargetReq)
+	
+	@doc(
+		summary: "查看救援任务"
+		description: "需要token，权限至少为见习队员-3。返回已认领的所有救援对象。"
+	)
+	@handler getRescueTask
+	post /rescue/gettask (GetRescueTaskReq) returns (GetRescueTaskResp)
+	
+	@doc(
+		summary: "查看救援对象"
+	)
+	@handler getRescueTargetInfo
+	post /rescue/targetinfo (GetRescueTargetInfoReq) returns (GetRescueTargetInfoResp)
+	
+	@doc(
+		summary: "签字"
+		description: "需要token，权限至少为见习队员-3。Body参数需要救援对象id以及签字图片的编码。"
+	)
+	@handler  sign
+	post /rescue/sign (SignReq)
+	
+	@doc(
+		summary: "查看签字"
+		description: "需要token，权限至少为见习队员-3。Body参数需要救援对象id，且只有该救援对象完成救援才能查看签字。"
+	)
+	@handler  getSignature
+	post /rescue/getsignature (GetSignatureReq) returns (GetSignatureResp)
+	
+	@doc(
+		summary: "救援信息评价"
+		description: "需要token，权限至少为见习队员-3。Body参数需要救援信息id以及时间和评价"
+	)
+	@handler rescueProcess
+	post /rescue/process (RescueProcessReq)
+	
+	@doc(
+		summary: "查看救援信息评价"
+		description: "需要token，权限至少为见习队员-3。Body参数需要救援信息id。"
+	)
+	@handler  getRescueProcess
+	post /rescue/getrescueprocess (GetRescueProcessReq) returns (GetRescueProcessResp)
+	
+	@doc(
+		summary: "救援数据分析（地区救援次数）"
+		description: "需要token，返回各个地区的救援次数。"
+	)
+	@handler areaRescueFrequency
+	post /rescue/arearescuefrequency returns (AreaRescueFrequencyResp)
+	
+	@doc(
+		summary: "救援数据分析（年份救援次数）"
+		description: "需要token，返回各个年份的救援次数。"
+	)
+	@handler yearRescueFrequency
+	post /rescue/yearrescuefrequency returns (YearRescueFrequencyResp)
+	
+	@doc(
+		summary: "设置救援时长阈值"
+		description: "需要token，权限至少为43-组委会成员 44-组委会主任"
+	)
+	@handler setRescueDurationThreshold
+	post /rescue/setthreshold (SetRescueDurationThresholdReq)
+}

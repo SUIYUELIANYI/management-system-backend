@@ -1,0 +1,10 @@
+// 根据api文件自动生成代码：goctl api go -api app.api -dir ../  --style=goZero
+// 生成yaml或者json配置文件 goctl api plugin -plugin goctl-swagger="swagger -filename app.json" -api app.api -dir .
+syntax = "v1"
+
+import "user.api"
+import "role.api"
+import "rescue.api"
+import "application.api"
+import "exam.api"
+import "file.api"

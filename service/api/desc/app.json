@@ -1,0 +1,3739 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "",
+    "version": ""
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "api/v1/application/address": {
+      "post": {
+        "summary": "查看申请表（按省份）",
+        "description": "仅限区域负责人和组织管理委员会。地址格式为省份-城市，如湖北-武汉，由于按省份，采用前两个字符匹配。",
+        "operationId": "getFormByAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FormsResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetByAddressReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "application"
+        ]
+      }
+    },
+    "api/v1/application/edit": {
+      "post": {
+        "summary": "提交/修改申请表",
+        "description": "仅限提交/修改不通过时且提交次数在3次以内",
+        "operationId": "editForm",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EditReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "application"
+        ]
+      }
+    },
+    "api/v1/application/form": {
+      "post": {
+        "summary": "查看申请表（仅限个人）",
+        "description": "需要token，返回申请表信息，含姓名、手机号、出生日期、省市、性别、邮箱",
+        "operationId": "getOwnForm",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FormResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "application"
+        ]
+      }
+    },
+    "api/v1/application/forms": {
+      "post": {
+        "summary": "查看申请表（仅限区域负责人和组织管理委员会）",
+        "description": "仅限区域负责人和组织管理委员会。区域负责人看到的是status=0的申请表，组织管理委员会查看的是status=1的申请表，也就是区域负责人通过后的申请表。",
+        "operationId": "getAllForm",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/FormsResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FormsReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "application"
+        ]
+      }
+    },
+    "api/v1/application/process": {
+      "post": {
+        "summary": "审批申请表（不包含订阅消息）",
+        "description": "仅限区域负责人和组织管理委员会，审批结果 0-不通过 1-通过，区域负责人通过后申请表状态为1，组织管理委员会通过后申请表状态为2。",
+        "operationId": "process",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProcessReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "application"
+        ]
+      }
+    },
+    "api/v1/application/processwithsubscribe": {
+      "post": {
+        "summary": "审批申请表（包含订阅消息）",
+        "description": "仅限区域负责人和组织管理委员会，审批结果 0-不通过 1-通过，区域负责人通过后申请表状态为1，组织管理委员会通过后申请表状态为2。只有在不通过和组委会通过的情况下会发送订阅，且如果该微信用户没有订阅消息，无法成功调用。",
+        "operationId": "processWithSubscribe",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProcessWithSubscribeReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "application"
+        ]
+      }
+    },
+    "api/v1/application/status": {
+      "post": {
+        "summary": "查看申请表（按申请表状态）",
+        "description": "无限制权限，用于测试 （0-待审批 1-区域负责人通过 2-组织管理委员会通过 3-未通过）。",
+        "operationId": "getFormByStatus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetByStatusResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetByStatusReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "application"
+        ]
+      }
+    },
+    "api/v1/exam/enterobjective": {
+      "post": {
+        "summary": "提交客观题成绩（单人）",
+        "operationId": "enterObjective",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EnterGradeReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "exam"
+        ]
+      }
+    },
+    "api/v1/exam/entersubjective": {
+      "post": {
+        "summary": "提交主观题成绩（单人）",
+        "operationId": "enterSubjective",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EnterGradeReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "exam"
+        ]
+      }
+    },
+    "api/v1/exam/getgrades": {
+      "post": {
+        "summary": "查询岗前培训成绩",
+        "description": "需要token，不需要Body参数。",
+        "operationId": "getGrades",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetGradesResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "exam"
+        ]
+      }
+    },
+    "api/v1/exam/importobjective": {
+      "post": {
+        "summary": "提交客观题成绩（多人）",
+        "description": "导入excel文件。",
+        "operationId": "importObjective",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "exam"
+        ]
+      }
+    },
+    "api/v1/exam/importsubjective": {
+      "post": {
+        "summary": "提交主观题成绩（多人）",
+        "description": "导入excel文件。",
+        "operationId": "importSubjective",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "exam"
+        ]
+      }
+    },
+    "api/v1/file/addfolder": {
+      "post": {
+        "summary": "添加文件夹",
+        "operationId": "addFolder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddFolderReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "file"
+        ]
+      }
+    },
+    "api/v1/file/deletefile": {
+      "post": {
+        "summary": "删除文件",
+        "description": "软删除",
+        "operationId": "deleteFile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteFileReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "file"
+        ]
+      }
+    },
+    "api/v1/file/deletefolder": {
+      "post": {
+        "summary": "删除文件夹",
+        "description": "软删除",
+        "operationId": "deleteFolder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteFolderReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "file"
+        ]
+      }
+    },
+    "api/v1/file/editfolder": {
+      "post": {
+        "summary": "修改文件夹信息",
+        "operationId": "editFolder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EditFolderReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "file"
+        ]
+      }
+    },
+    "api/v1/file/editvideo": {
+      "post": {
+        "summary": "修改视频信息",
+        "description": "0-非在册队员 1-申请队员 2-岗前培训 3-见习队员 4-正式队员 5-督导老师 6-树洞之友 40-普通队员 41-核心队员 42-区域负责人 43-组委会成员 44-组委会主任'",
+        "operationId": "editVideo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EditVideoReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "file"
+        ]
+      }
+    },
+    "api/v1/file/getfolder": {
+      "post": {
+        "summary": "查看文件夹",
+        "description": "返回满足权限的所有文件夹。",
+        "operationId": "getFolder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetFolderResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetFolderReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "file"
+        ]
+      }
+    },
+    "api/v1/file/getqiniutoken": {
+      "post": {
+        "summary": "获取七牛云token",
+        "description": "该token用于直接上传文件",
+        "operationId": "getQiNiuToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetQiNiuTokenResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "file"
+        ]
+      }
+    },
+    "api/v1/file/getvideo": {
+      "post": {
+        "summary": "查看视频",
+        "description": "只能查看身份小于等于自身的视频",
+        "operationId": "getVideo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetVideoResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetVideoReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "file"
+        ]
+      }
+    },
+    "api/v1/file/getviewingrecord": {
+      "post": {
+        "summary": "查看视频观看记录",
+        "operationId": "getViewingRecord",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetViewingRecordResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetViewingRecordReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "file"
+        ]
+      }
+    },
+    "api/v1/file/submitviewingrecord": {
+      "post": {
+        "summary": "提交视频观看记录",
+        "description": "时间格式为：0000-00-00 00:00:00",
+        "operationId": "submitViewingRecord",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SubmitViewingRecordReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "file"
+        ]
+      }
+    },
+    "api/v1/file/uploadVideoUrl": {
+      "post": {
+        "summary": "提交课程视频（传url）",
+        "description": "前端先拿到token后上传文件，然后将url和文件名，文件夹id一起上传创建视频。",
+        "operationId": "uploadVideoUrl",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UploadVideoUrlReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "file"
+        ]
+      }
+    },
+    "api/v1/file/uploadvideo": {
+      "post": {
+        "summary": "提交课程视频",
+        "description": "body使用form-data格式，需要三个参数，file-文件，fileName-文件名，folderId-文件夹id，后面两个参数都为string类型，文件就是file类型。",
+        "operationId": "uploadVideo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UploadVideoResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "file"
+        ]
+      }
+    },
+    "api/v1/rescue/address": {
+      "post": {
+        "summary": "获取救援信息（按省份）",
+        "description": "需要token，权限至少为见习队员-3。",
+        "operationId": "getRescueInfoByAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RescueInfosResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetRescueInfoByAddressReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/arearescuefrequency": {
+      "post": {
+        "summary": "救援数据分析（地区救援次数）",
+        "description": "需要token，返回各个地区的救援次数。",
+        "operationId": "areaRescueFrequency",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/AreaRescueFrequencyResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/auth": {
+      "post": {
+        "summary": "身份认证",
+        "description": "发布救援信息需要管理员单独通过该接口用手机密码登录以获取专门用于发布救援信息的token。通过微信注册的账号默认密码为123456。且该token只能用一次，导入救援信息后立即失效。目前暂定组委会成员（role为43和44）才能通过认证。",
+        "operationId": "authRescue",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/AuthResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AuthReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/claim": {
+      "post": {
+        "summary": "认领救援对象",
+        "description": "需要token，权限至少为见习队员-3。具体流程为：志愿者获取救援信息，然后选择救援信息认领，实际上是人类救援信息对应的救援对象。",
+        "operationId": "claimRescueTarget",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ClaimRescueTargetReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/claimed": {
+      "post": {
+        "summary": "获取救援信息（已认领且未评价）",
+        "description": "需要token,权限至少为见习队员-3。返回自己已经认领的，而且没有评价过的救援信息。",
+        "operationId": "getClaimedRescueInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RescueInfosResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 定义查看救援信息的json请求体",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RescueInfosReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/destroyrescuetoken": {
+      "post": {
+        "summary": "销毁认证",
+        "description": "将token销毁。不需要参数，直接删除缓存中的token。",
+        "operationId": "destroyRescueToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/getrescueprocess": {
+      "post": {
+        "summary": "查看救援信息评价",
+        "description": "需要token，权限至少为见习队员-3。Body参数需要救援信息id。",
+        "operationId": "getRescueProcess",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetRescueProcessResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetRescueProcessReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/getsignature": {
+      "post": {
+        "summary": "查看签字",
+        "description": "需要token，权限至少为见习队员-3。Body参数需要救援对象id，且只有该救援对象完成救援才能查看签字。",
+        "operationId": "getSignature",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetSignatureResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetSignatureReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/gettask": {
+      "post": {
+        "summary": "查看救援任务",
+        "description": "需要token，权限至少为见习队员-3。返回已认领的所有救援对象。",
+        "operationId": "getRescueTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetRescueTaskResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetRescueTaskReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/infos": {
+      "post": {
+        "summary": "获取救援信息",
+        "description": "需要token，权限至少为见习队员-3。",
+        "operationId": "getAllRescueInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RescueInfosResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 定义查看救援信息的json请求体",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RescueInfosReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/process": {
+      "post": {
+        "summary": "救援信息评价",
+        "description": "需要token，权限至少为见习队员-3。Body参数需要救援信息id以及时间和评价",
+        "operationId": "rescueProcess",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RescueProcessReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/release": {
+      "post": {
+        "summary": "发布救援信息",
+        "description": "管理员需要携带认证后的token发布救援信息，信息发布后，志愿者收到订阅消息。",
+        "operationId": "releaseRescueInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 发布单条救援信息接口的json请求体",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReleaseRescueInfoReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/releasebyexcel": {
+      "post": {
+        "summary": "Excel导入救援信息",
+        "operationId": "releaseResuceInfoByExcel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/rescuetargetid": {
+      "post": {
+        "summary": "获取救援信息（按救援对象）",
+        "description": "需要token，权限至少为见习队员-3。需要rescue_target_id，返回一个救援对象的所有救援信息。",
+        "operationId": "getRescueInfoByRescueTargetId",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetRescueInfoByRescueTargetIdResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetRescueInfoByRescueTargetIdReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/rescueteachername": {
+      "post": {
+        "summary": "获取救援信息（按救援老师姓名）",
+        "description": "需要token，权限至少为见习队员-3。需要传救援老师姓名，使用模糊搜索，返回救援老师认领的救援对象包含的所有救援信息。",
+        "operationId": "getRescueInfoByRescueTeacherName",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetRescueInfoByRescueTeacherNameResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetRescueInfoByRescueTeacherNameReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/setthreshold": {
+      "post": {
+        "summary": "设置救援时长阈值",
+        "description": "需要token，权限至少为43-组委会成员 44-组委会主任",
+        "operationId": "setRescueDurationThreshold",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SetRescueDurationThresholdReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/sign": {
+      "post": {
+        "summary": "签字",
+        "description": "需要token，权限至少为见习队员-3。Body参数需要救援对象id以及签字图片的编码。",
+        "operationId": "sign",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SignReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/targetinfo": {
+      "post": {
+        "summary": "查看救援对象",
+        "operationId": "getRescueTargetInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetRescueTargetInfoResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetRescueTargetInfoReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/unclaimed": {
+      "post": {
+        "summary": "获取救援信息（未认领）",
+        "description": "需要token,权限至少为见习队员-3。返回自己没有认领的，而且该救援信息的对象没有被3个人认领的救援信息。",
+        "operationId": "getUnclaimedRescueInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RescueInfosResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 定义查看救援信息的json请求体",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RescueInfosReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/rescue/yearrescuefrequency": {
+      "post": {
+        "summary": "救援数据分析（年份救援次数）",
+        "description": "需要token，返回各个年份的救援次数。",
+        "operationId": "yearRescueFrequency",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/YearRescueFrequencyResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "rescue"
+        ]
+      }
+    },
+    "api/v1/role/change": {
+      "post": {
+        "summary": "更改成员身份",
+        "operationId": "changeRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ChangeRoleReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "role"
+        ]
+      }
+    },
+    "api/v1/role/viewchangelist": {
+      "post": {
+        "summary": "获取某个成员的身份变动信息",
+        "operationId": "roleChangeList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RoleChangeInfoListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RoleChangeInfoListReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "role"
+        ]
+      }
+    },
+    "api/v1/user/accesstoken": {
+      "post": {
+        "summary": "获取接口调用凭证",
+        "description": "不需要传参数，服务端直接调用接口返回access_token，官方设置过期时间为7200s（2小时）。",
+        "operationId": "getAccessToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetAccessTokenResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/all": {
+      "post": {
+        "summary": "获取所有用户信息",
+        "description": "需要token，Body不设置参数。不限制权限。",
+        "operationId": "getAllUserInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetAllUserInfoResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetAllUserInfoReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/edit": {
+      "post": {
+        "summary": "修改个人信息",
+        "operationId": "editUserInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EditUserInfoReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/getrescuefrequency": {
+      "post": {
+        "summary": "查看用户救援次数",
+        "description": "需要token，Body参数需要查看用户的id，返回该用户的救援次数。",
+        "operationId": "getUserRescueFrequency",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetUserRescueFrequencyResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetUserRescueFrequencyReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/getresuceduration": {
+      "post": {
+        "summary": "查看用户救援时长",
+        "description": "需要token，Body参数需要查看用户的id，返回该用户的救援时长。",
+        "operationId": "getUserRescueDuration",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetUserRescueDurationResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetUserRescueDurationReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/id": {
+      "post": {
+        "summary": "获取用户信息",
+        "description": "需要token，返回user_id对应的用户信息。",
+        "operationId": "getUserInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserInfoResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetUserInfoReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/importexcel": {
+      "post": {
+        "summary": "Excel导入用户账号信息",
+        "description": "用户需要注册账号后才能导入个人信息。",
+        "operationId": "importExcel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ImportExcelResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/info": {
+      "post": {
+        "summary": "获取个人信息",
+        "description": "需要token，不需要Body参数，返回token对应用户的个人信息。",
+        "operationId": "userInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserInfoResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/login": {
+      "post": {
+        "summary": "登录",
+        "operationId": "login",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LoginResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/phonenumber": {
+      "post": {
+        "summary": "获取电话号码",
+        "description": "客户端调用getPhoneNumber返回code，将code传给服务端调用官方接口返回电话信息。",
+        "operationId": "getPhoneNumber",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetPhoneNumberResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetPhoneNumberReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/register": {
+      "post": {
+        "summary": "注册",
+        "operationId": "register",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RegisterResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " 定义注册接口的json请求体",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/rescueduration": {
+      "post": {
+        "summary": "查看个人救援时长",
+        "description": "需要token，不需要Body参数，查看用户自己的救援时长。",
+        "operationId": "rescueDuration",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RescueDurationResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/rescuefrequency": {
+      "post": {
+        "summary": "查看个人救援次数",
+        "description": "需要token，不需要Body参数，查看用户自己的救援次数",
+        "operationId": "rescueFrequency",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RescueFrequencyResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/role": {
+      "post": {
+        "summary": "获取所有用户信息（按身份）",
+        "operationId": "getAllUserInfoByRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetAllUserInfoByRoleResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetAllUserInfoByRoleReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/trainging": {
+      "post": {
+        "summary": "获取岗前培训用户信息（按电话）",
+        "operationId": "getTrainingUserInfoByMobile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetTrainingUserInfoByMobileResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetTrainingUserInfoByMobileReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/uploadavatar": {
+      "post": {
+        "summary": "上传头像",
+        "description": "需要token，Body设置form-data参数名为file，参数类型为file。",
+        "operationId": "uploadAvatar",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UploadAvatarResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "api/v1/user/wxMiniAuth": {
+      "post": {
+        "summary": "微信认证登录",
+        "description": "调用wx.login获取code，调用获取电话号码接口获取手机号。",
+        "operationId": "WXMiniAuth",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/WXMiniAuthResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WXMiniAuthReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "AddFolderReq": {
+      "type": "object",
+      "properties": {
+        "folder_name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "AddFolderReq",
+      "required": [
+        "folder_name",
+        "role"
+      ]
+    },
+    "ApplicationForm": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "create_time": {
+          "type": "string"
+        },
+        "update_time": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "mobile": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "sex": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "email": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "birthday": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "regional_head_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "organizing_committee_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "submission_time": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "ApplicationForm",
+      "required": [
+        "id",
+        "create_time",
+        "update_time",
+        "user_id",
+        "mobile",
+        "username",
+        "sex",
+        "email",
+        "address",
+        "birthday",
+        "status",
+        "regional_head_id",
+        "organizing_committee_id",
+        "submission_time"
+      ]
+    },
+    "Area": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": " 省份名称"
+        },
+        "rescue_frequency": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 救援次数"
+        }
+      },
+      "title": "Area",
+      "required": [
+        "name",
+        "rescue_frequency"
+      ]
+    },
+    "AreaRescueFrequencyResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Area"
+          }
+        }
+      },
+      "title": "AreaRescueFrequencyResp",
+      "required": [
+        "list"
+      ]
+    },
+    "AuthReq": {
+      "type": "object",
+      "properties": {
+        "mobile": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "title": "AuthReq",
+      "required": [
+        "mobile",
+        "password"
+      ]
+    },
+    "AuthResp": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "access_expire": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "refresh_after": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "AuthResp",
+      "required": [
+        "access_token",
+        "access_expire",
+        "refresh_after"
+      ]
+    },
+    "ChangeRoleReq": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "new_role": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "ChangeRoleReq",
+      "required": [
+        "user_id",
+        "new_role"
+      ]
+    },
+    "ClaimRescueTargetReq": {
+      "type": "object",
+      "properties": {
+        "rescue_target_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "ClaimRescueTargetReq",
+      "required": [
+        "rescue_target_id"
+      ]
+    },
+    "DeleteFileReq": {
+      "type": "object",
+      "properties": {
+        "file_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "DeleteFileReq",
+      "required": [
+        "file_id"
+      ]
+    },
+    "DeleteFolderReq": {
+      "type": "object",
+      "properties": {
+        "folder_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "DeleteFolderReq",
+      "required": [
+        "folder_id"
+      ]
+    },
+    "EditFolderReq": {
+      "type": "object",
+      "properties": {
+        "folder_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "folder_name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "EditFolderReq",
+      "required": [
+        "folder_id",
+        "folder_name",
+        "role"
+      ]
+    },
+    "EditReq": {
+      "type": "object",
+      "properties": {
+        "mobile": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "sex": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "address": {
+          "type": "string"
+        },
+        "birthday": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      },
+      "title": "EditReq",
+      "required": [
+        "mobile",
+        "username",
+        "sex",
+        "address",
+        "birthday",
+        "email"
+      ]
+    },
+    "EditUserInfoReq": {
+      "type": "object",
+      "properties": {
+        "mobile": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "sex": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "email": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "birthday": {
+          "type": "string"
+        }
+      },
+      "title": "EditUserInfoReq",
+      "required": [
+        "mobile",
+        "username",
+        "sex",
+        "email",
+        "address",
+        "birthday"
+      ]
+    },
+    "EditVideoReq": {
+      "type": "object",
+      "properties": {
+        "video_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "file_name": {
+          "type": "string"
+        },
+        "folder_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "EditVideoReq",
+      "required": [
+        "video_id",
+        "file_name",
+        "folder_id"
+      ]
+    },
+    "EnterGradeReq": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "result": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "time": {
+          "type": "string"
+        }
+      },
+      "title": "EnterGradeReq",
+      "required": [
+        "user_id",
+        "result",
+        "time"
+      ]
+    },
+    "Exam": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "result": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "time": {
+          "type": "string"
+        }
+      },
+      "title": "Exam",
+      "required": [
+        "id",
+        "user_id",
+        "result",
+        "time"
+      ]
+    },
+    "File": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "create_time": {
+          "type": "string"
+        },
+        "update_time": {
+          "type": "string"
+        },
+        "file_name": {
+          "type": "string"
+        },
+        "folder_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "title": "File",
+      "required": [
+        "id",
+        "create_time",
+        "update_time",
+        "file_name",
+        "folder_id",
+        "url"
+      ]
+    },
+    "Folder": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "create_time": {
+          "type": "string"
+        },
+        "update_time": {
+          "type": "string"
+        },
+        "folder_name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "Folder",
+      "required": [
+        "id",
+        "create_time",
+        "update_time",
+        "folder_name",
+        "role"
+      ]
+    },
+    "FormResp": {
+      "type": "object",
+      "properties": {
+        "application_form": {
+          "$ref": "#/definitions/ApplicationForm"
+        }
+      },
+      "title": "FormResp",
+      "required": [
+        "application_form"
+      ]
+    },
+    "FormsReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "FormsReq",
+      "required": [
+        "page",
+        "page_size"
+      ]
+    },
+    "FormsResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ApplicationForm"
+          }
+        }
+      },
+      "title": "FormsResp",
+      "required": [
+        "list"
+      ]
+    },
+    "GetAccessTokenResp": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        }
+      },
+      "title": "GetAccessTokenResp",
+      "required": [
+        "access_token"
+      ]
+    },
+    "GetAllUserInfoByRoleReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "role": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetAllUserInfoByRoleReq",
+      "required": [
+        "page",
+        "page_size",
+        "role"
+      ]
+    },
+    "GetAllUserInfoByRoleResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        }
+      },
+      "title": "GetAllUserInfoByRoleResp",
+      "required": [
+        "list"
+      ]
+    },
+    "GetAllUserInfoReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetAllUserInfoReq",
+      "required": [
+        "page",
+        "page_size"
+      ]
+    },
+    "GetAllUserInfoResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        }
+      },
+      "title": "GetAllUserInfoResp",
+      "required": [
+        "list"
+      ]
+    },
+    "GetByAddressReq": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetByAddressReq",
+      "required": [
+        "address",
+        "page",
+        "page_size"
+      ]
+    },
+    "GetByStatusReq": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetByStatusReq",
+      "required": [
+        "status",
+        "page",
+        "page_size"
+      ]
+    },
+    "GetByStatusResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ApplicationForm"
+          }
+        }
+      },
+      "title": "GetByStatusResp",
+      "required": [
+        "list"
+      ]
+    },
+    "GetFolderReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetFolderReq",
+      "required": [
+        "page",
+        "page_size"
+      ]
+    },
+    "GetFolderResp": {
+      "type": "object",
+      "properties": {
+        "folder": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Folder"
+          }
+        }
+      },
+      "title": "GetFolderResp",
+      "required": [
+        "folder"
+      ]
+    },
+    "GetGradesResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Grades"
+          }
+        }
+      },
+      "title": "GetGradesResp",
+      "required": [
+        "list"
+      ]
+    },
+    "GetPhoneNumberReq": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": " getPhoneNumber(前端调用的函数)返回的code与wx.login返回的code作用不一样"
+        }
+      },
+      "title": "GetPhoneNumberReq",
+      "required": [
+        "code"
+      ]
+    },
+    "GetPhoneNumberResp": {
+      "type": "object",
+      "properties": {
+        "phone_info": {
+          "$ref": "#/definitions/PhoneInfo"
+        }
+      },
+      "title": "GetPhoneNumberResp",
+      "required": [
+        "phone_info"
+      ]
+    },
+    "GetQiNiuTokenResp": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      },
+      "title": "GetQiNiuTokenResp",
+      "required": [
+        "token"
+      ]
+    },
+    "GetRescueInfoByAddressReq": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetRescueInfoByAddressReq",
+      "required": [
+        "address",
+        "page",
+        "page_size"
+      ]
+    },
+    "GetRescueInfoByRescueTargetIdReq": {
+      "type": "object",
+      "properties": {
+        "rescue_target_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetRescueInfoByRescueTargetIdReq",
+      "required": [
+        "rescue_target_id",
+        "page",
+        "page_size"
+      ]
+    },
+    "GetRescueInfoByRescueTargetIdResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RescueInfo"
+          }
+        }
+      },
+      "title": "GetRescueInfoByRescueTargetIdResp",
+      "required": [
+        "list"
+      ]
+    },
+    "GetRescueInfoByRescueTeacherNameReq": {
+      "type": "object",
+      "properties": {
+        "rescue_teacher_name": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetRescueInfoByRescueTeacherNameReq",
+      "required": [
+        "rescue_teacher_name",
+        "page",
+        "page_size"
+      ]
+    },
+    "GetRescueInfoByRescueTeacherNameResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RescueInfo"
+          }
+        }
+      },
+      "title": "GetRescueInfoByRescueTeacherNameResp",
+      "required": [
+        "list"
+      ]
+    },
+    "GetRescueProcessReq": {
+      "type": "object",
+      "properties": {
+        "rescue_info_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetRescueProcessReq",
+      "required": [
+        "rescue_info_id",
+        "page",
+        "page_size"
+      ]
+    },
+    "GetRescueProcessResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RescueProcess"
+          }
+        }
+      },
+      "title": "GetRescueProcessResp",
+      "required": [
+        "list"
+      ]
+    },
+    "GetRescueTargetInfoReq": {
+      "type": "object",
+      "properties": {
+        "rescue_target_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetRescueTargetInfoReq",
+      "required": [
+        "rescue_target_id"
+      ]
+    },
+    "GetRescueTargetInfoResp": {
+      "type": "object",
+      "properties": {
+        "rescue_target_info": {
+          "$ref": "#/definitions/RescueTarget"
+        }
+      },
+      "title": "GetRescueTargetInfoResp",
+      "required": [
+        "rescue_target_info"
+      ]
+    },
+    "GetRescueTaskReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetRescueTaskReq",
+      "required": [
+        "page",
+        "page_size"
+      ]
+    },
+    "GetRescueTaskResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RescueTarget"
+          }
+        }
+      },
+      "title": "GetRescueTaskResp",
+      "required": [
+        "list"
+      ]
+    },
+    "GetSignatureReq": {
+      "type": "object",
+      "properties": {
+        "rescue_target_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetSignatureReq",
+      "required": [
+        "rescue_target_id"
+      ]
+    },
+    "GetSignatureResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Signature"
+          }
+        }
+      },
+      "title": "GetSignatureResp",
+      "required": [
+        "list"
+      ]
+    },
+    "GetTrainingUserInfoByMobileReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "mobile": {
+          "type": "string"
+        }
+      },
+      "title": "GetTrainingUserInfoByMobileReq",
+      "required": [
+        "page",
+        "page_size",
+        "mobile"
+      ]
+    },
+    "GetTrainingUserInfoByMobileResp": {
+      "type": "object",
+      "properties": {
+        "user_info": {
+          "$ref": "#/definitions/User"
+        }
+      },
+      "title": "GetTrainingUserInfoByMobileResp",
+      "required": [
+        "user_info"
+      ]
+    },
+    "GetUserInfoReq": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetUserInfoReq",
+      "required": [
+        "user_id"
+      ]
+    },
+    "GetUserRescueDurationReq": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetUserRescueDurationReq",
+      "required": [
+        "user_id"
+      ]
+    },
+    "GetUserRescueDurationResp": {
+      "type": "object",
+      "properties": {
+        "rescue_duration": {
+          "type": "string"
+        }
+      },
+      "title": "GetUserRescueDurationResp",
+      "required": [
+        "rescue_duration"
+      ]
+    },
+    "GetUserRescueFrequencyReq": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetUserRescueFrequencyReq",
+      "required": [
+        "user_id"
+      ]
+    },
+    "GetUserRescueFrequencyResp": {
+      "type": "object",
+      "properties": {
+        "rescue_frequency": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetUserRescueFrequencyResp",
+      "required": [
+        "rescue_frequency"
+      ]
+    },
+    "GetVideoReq": {
+      "type": "object",
+      "properties": {
+        "folder_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetVideoReq",
+      "required": [
+        "folder_id",
+        "page",
+        "page_size"
+      ]
+    },
+    "GetVideoResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/File"
+          }
+        }
+      },
+      "title": "GetVideoResp",
+      "required": [
+        "list"
+      ]
+    },
+    "GetViewingRecordReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetViewingRecordReq",
+      "required": [
+        "page",
+        "page_size"
+      ]
+    },
+    "GetViewingRecordResp": {
+      "type": "object",
+      "properties": {
+        "viewing_record": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ViewingRecord"
+          }
+        }
+      },
+      "title": "GetViewingRecordResp",
+      "required": [
+        "viewing_record"
+      ]
+    },
+    "Grades": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "result": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "time": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "title": "Grades",
+      "required": [
+        "id",
+        "user_id",
+        "result",
+        "time",
+        "type"
+      ]
+    },
+    "ImportExcelResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        }
+      },
+      "title": "ImportExcelResp",
+      "required": [
+        "list"
+      ]
+    },
+    "LoginReq": {
+      "type": "object",
+      "properties": {
+        "mobile": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "title": "LoginReq",
+      "required": [
+        "mobile",
+        "password"
+      ]
+    },
+    "LoginResp": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "access_expire": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "refresh_after": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "role": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "LoginResp",
+      "required": [
+        "access_token",
+        "access_expire",
+        "refresh_after",
+        "role"
+      ]
+    },
+    "PhoneInfo": {
+      "type": "object",
+      "properties": {
+        "phone_number": {
+          "type": "string",
+          "description": " 用户绑定的手机号"
+        },
+        "pure_phone_number": {
+          "type": "string",
+          "description": " 没有区号的手机号"
+        },
+        "country_code": {
+          "type": "string",
+          "description": " 区号"
+        },
+        "watermark": {
+          "$ref": "#/definitions/WaterMark",
+          "description": " 数据水印"
+        }
+      },
+      "title": "PhoneInfo",
+      "required": [
+        "phone_number",
+        "pure_phone_number",
+        "country_code",
+        "watermark"
+      ]
+    },
+    "ProcessReq": {
+      "type": "object",
+      "properties": {
+        "application_form_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "result": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 审批结果 0-未通过 1-通过"
+        }
+      },
+      "title": "ProcessReq",
+      "required": [
+        "application_form_id",
+        "result"
+      ]
+    },
+    "ProcessWithSubscribeReq": {
+      "type": "object",
+      "properties": {
+        "application_form_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "result": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 审批结果 0-未通过 1-通过"
+        },
+        "access_token": {
+          "type": "string"
+        }
+      },
+      "title": "ProcessWithSubscribeReq",
+      "required": [
+        "application_form_id",
+        "result",
+        "access_token"
+      ]
+    },
+    "RegisterReq": {
+      "type": "object",
+      "properties": {
+        "mobile": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "title": "RegisterReq",
+      "required": [
+        "mobile",
+        "password"
+      ]
+    },
+    "RegisterResp": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "access_expire": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "refresh_after": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "role": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "RegisterResp",
+      "required": [
+        "access_token",
+        "access_expire",
+        "refresh_after",
+        "role"
+      ]
+    },
+    "ReleaseRescueInfoReq": {
+      "type": "object",
+      "properties": {
+        "release_time": {
+          "type": "string",
+          "description": " 此条微博的发布时间"
+        },
+        "weibo_account": {
+          "type": "string",
+          "description": " 微博账户"
+        },
+        "weibo_address": {
+          "type": "string",
+          "description": " 微博地址"
+        },
+        "nickname": {
+          "type": "string",
+          "description": " 昵称"
+        },
+        "risk_level": {
+          "type": "string",
+          "description": " 危险级别"
+        },
+        "area": {
+          "type": "string",
+          "description": " 所在城市"
+        },
+        "sex": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 性别"
+        },
+        "birthday": {
+          "type": "string",
+          "description": " 生日"
+        },
+        "brief_introduction": {
+          "type": "string",
+          "description": " 简介"
+        },
+        "text": {
+          "type": "string",
+          "description": " 信息原文"
+        },
+        "flag": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 是否发布订阅消息"
+        }
+      },
+      "title": "ReleaseRescueInfoReq",
+      "required": [
+        "release_time",
+        "weibo_account",
+        "weibo_address",
+        "nickname",
+        "risk_level",
+        "area",
+        "sex",
+        "birthday",
+        "brief_introduction",
+        "text",
+        "flag"
+      ]
+    },
+    "RescueDurationResp": {
+      "type": "object",
+      "properties": {
+        "rescue_duration": {
+          "type": "string"
+        }
+      },
+      "title": "RescueDurationResp",
+      "required": [
+        "rescue_duration"
+      ]
+    },
+    "RescueFrequencyResp": {
+      "type": "object",
+      "properties": {
+        "rescue_frequency": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "RescueFrequencyResp",
+      "required": [
+        "rescue_frequency"
+      ]
+    },
+    "RescueInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "create_time": {
+          "type": "string",
+          "description": " 救援信息在数据库中的创建时间，相当于管理员导入的时间"
+        },
+        "update_time": {
+          "type": "string"
+        },
+        "rescue_target_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 本条救援信息所属救援对象的id"
+        },
+        "release_time": {
+          "type": "string",
+          "description": " 此条微博的发布时间"
+        },
+        "weibo_account": {
+          "type": "string"
+        },
+        "weibo_address": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "risk_level": {
+          "type": "string"
+        },
+        "area": {
+          "type": "string"
+        },
+        "sex": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "birthday": {
+          "type": "string"
+        },
+        "brief_introduction": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "title": "RescueInfo",
+      "required": [
+        "id",
+        "create_time",
+        "update_time",
+        "rescue_target_id",
+        "release_time",
+        "weibo_account",
+        "weibo_address",
+        "nickname",
+        "risk_level",
+        "area",
+        "sex",
+        "birthday",
+        "brief_introduction",
+        "text"
+      ]
+    },
+    "RescueInfosReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "RescueInfosReq",
+      "required": [
+        "page",
+        "page_size"
+      ]
+    },
+    "RescueInfosResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RescueInfo"
+          }
+        }
+      },
+      "title": "RescueInfosResp",
+      "required": [
+        "list"
+      ]
+    },
+    "RescueProcess": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "create_time": {
+          "type": "string"
+        },
+        "update_time": {
+          "type": "string"
+        },
+        "rescue_teacher_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "rescue_info_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "start_time": {
+          "type": "string",
+          "description": " 本次救援起始时间"
+        },
+        "end_time": {
+          "type": "string",
+          "description": " 本次救援结束时间"
+        },
+        "duration": {
+          "type": "string",
+          "description": " 时长（系统计算）"
+        },
+        "evaluation": {
+          "type": "string",
+          "description": " 评价"
+        }
+      },
+      "title": "RescueProcess",
+      "required": [
+        "id",
+        "create_time",
+        "update_time",
+        "rescue_teacher_id",
+        "rescue_info_id",
+        "start_time",
+        "end_time",
+        "duration",
+        "evaluation"
+      ]
+    },
+    "RescueProcessReq": {
+      "type": "object",
+      "properties": {
+        "rescue_info_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "start_time": {
+          "type": "string"
+        },
+        "end_time": {
+          "type": "string"
+        },
+        "evaluation": {
+          "type": "string"
+        }
+      },
+      "title": "RescueProcessReq",
+      "required": [
+        "rescue_info_id",
+        "start_time",
+        "end_time",
+        "evaluation"
+      ]
+    },
+    "RescueTarget": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 救援对象id"
+        },
+        "create_time": {
+          "type": "string"
+        },
+        "update_time": {
+          "type": "string"
+        },
+        "weibo_address": {
+          "type": "string",
+          "description": " 救援对象微博地址（唯一标识）"
+        },
+        "nickname": {
+          "type": "string",
+          "description": " 救援对象昵称（按最新的救援信息数据）"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 救援状态（0-待救援 1-救援中 2-已救援）"
+        },
+        "start_time": {
+          "type": "string",
+          "description": " 救援起始时间"
+        },
+        "end_time": {
+          "type": "string",
+          "description": " 救援结束时间"
+        },
+        "rescue_teacher1_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 救援老师1id"
+        },
+        "rescue_teacher1_name": {
+          "type": "string",
+          "description": " 救援老师1姓名"
+        },
+        "rescue_teacher1_role": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 救援老师1身份"
+        },
+        "rescue_teacher2_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 救援老师2id"
+        },
+        "rescue_teacher2_name": {
+          "type": "string",
+          "description": " 救援老师2姓名"
+        },
+        "rescue_teacher2_role": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 救援老师2身份"
+        },
+        "rescue_teacher3_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 救援老师3id"
+        },
+        "rescue_teacher3_name": {
+          "type": "string",
+          "description": " 救援老师3姓名"
+        },
+        "rescue_teacher3_role": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 救援老师3身份"
+        },
+        "description": {
+          "type": "string",
+          "description": " 救援过程描述"
+        },
+        "evalutaion": {
+          "type": "string",
+          "description": " 最终评价"
+        }
+      },
+      "title": "RescueTarget",
+      "required": [
+        "id",
+        "create_time",
+        "update_time",
+        "weibo_address",
+        "nickname",
+        "status",
+        "start_time",
+        "end_time",
+        "rescue_teacher1_id",
+        "rescue_teacher1_name",
+        "rescue_teacher1_role",
+        "rescue_teacher2_id",
+        "rescue_teacher2_name",
+        "rescue_teacher2_role",
+        "rescue_teacher3_id",
+        "rescue_teacher3_name",
+        "rescue_teacher3_role",
+        "description",
+        "evalutaion"
+      ]
+    },
+    "RoleChangeInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "create_time": {
+          "type": "string",
+          "description": " 变动身份时间"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 身份变动用户Id"
+        },
+        "operator_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 操作人Id"
+        },
+        "new_role": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 新身份 '0-申请队员 1-岗前培训 2-见习队员 3-正式队员 4-督导老师 30-普通队员 31-核心队员 32-区域负责人 33-组委会成员 34-组委会主任'"
+        },
+        "old_role": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 旧身份"
+        }
+      },
+      "title": "RoleChangeInfo",
+      "required": [
+        "id",
+        "create_time",
+        "user_id",
+        "operator_id",
+        "new_role",
+        "old_role"
+      ]
+    },
+    "RoleChangeInfoListReq": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "RoleChangeInfoListReq",
+      "required": [
+        "user_id"
+      ]
+    },
+    "RoleChangeInfoListResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RoleChangeInfo"
+          }
+        }
+      },
+      "title": "RoleChangeInfoListResp",
+      "required": [
+        "list"
+      ]
+    },
+    "SetRescueDurationThresholdReq": {
+      "type": "object",
+      "properties": {
+        "threshold": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "SetRescueDurationThresholdReq",
+      "required": [
+        "threshold"
+      ]
+    },
+    "SignReq": {
+      "type": "object",
+      "properties": {
+        "rescue_target_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "image": {
+          "type": "string"
+        }
+      },
+      "title": "SignReq",
+      "required": [
+        "rescue_target_id",
+        "image"
+      ]
+    },
+    "Signature": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "create_time": {
+          "type": "string"
+        },
+        "update_time": {
+          "type": "string"
+        },
+        "rescue_teacher_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "rescue_teacher_name": {
+          "type": "string"
+        },
+        "rescue_teacher_role": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "rescue_target_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "image": {
+          "type": "string"
+        }
+      },
+      "title": "Signature",
+      "required": [
+        "id",
+        "create_time",
+        "update_time",
+        "rescue_teacher_id",
+        "rescue_teacher_name",
+        "rescue_teacher_role",
+        "rescue_target_id",
+        "image"
+      ]
+    },
+    "SubmitViewingRecordReq": {
+      "type": "object",
+      "properties": {
+        "file_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "duration": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "SubmitViewingRecordReq",
+      "required": [
+        "file_id",
+        "duration"
+      ]
+    },
+    "UploadAvatarResp": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        }
+      },
+      "title": "UploadAvatarResp",
+      "required": [
+        "url"
+      ]
+    },
+    "UploadVideoResp": {
+      "type": "object",
+      "properties": {
+        "video_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "title": "UploadVideoResp",
+      "required": [
+        "video_id",
+        "url"
+      ]
+    },
+    "UploadVideoUrlReq": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "file_name": {
+          "type": "string"
+        },
+        "folder_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "UploadVideoUrlReq",
+      "required": [
+        "url",
+        "file_name",
+        "folder_id"
+      ]
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "mobile": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "sex": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "birthday": {
+          "type": "string"
+        }
+      },
+      "title": "User",
+      "required": [
+        "id",
+        "mobile",
+        "username",
+        "sex",
+        "email",
+        "role",
+        "avatar",
+        "address",
+        "birthday"
+      ]
+    },
+    "UserInfoResp": {
+      "type": "object",
+      "properties": {
+        "user_info": {
+          "$ref": "#/definitions/User"
+        }
+      },
+      "title": "UserInfoResp",
+      "required": [
+        "user_info"
+      ]
+    },
+    "ViewingRecord": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "create_time": {
+          "type": "string"
+        },
+        "update_time": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "username": {
+          "type": "string"
+        },
+        "file_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "file_name": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 观看时间（多次观看取最大值）"
+        }
+      },
+      "title": "ViewingRecord",
+      "required": [
+        "id",
+        "create_time",
+        "update_time",
+        "user_id",
+        "username",
+        "file_id",
+        "file_name",
+        "duration"
+      ]
+    },
+    "WXMiniAuthReq": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "phone_number": {
+          "type": "string"
+        }
+      },
+      "title": "WXMiniAuthReq",
+      "required": [
+        "code",
+        "phone_number"
+      ]
+    },
+    "WXMiniAuthResp": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "access_expire": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "refresh_after": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "role": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "WXMiniAuthResp",
+      "required": [
+        "access_token",
+        "access_expire",
+        "refresh_after",
+        "role"
+      ]
+    },
+    "WaterMark": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "appid": {
+          "type": "string"
+        }
+      },
+      "title": "WaterMark",
+      "required": [
+        "timestamp",
+        "appid"
+      ]
+    },
+    "Year": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": " 年份"
+        },
+        "rescue_frequency": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 救援次数"
+        }
+      },
+      "title": "Year",
+      "required": [
+        "name",
+        "rescue_frequency"
+      ]
+    },
+    "YearRescueFrequencyResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Year"
+          }
+        }
+      },
+      "title": "YearRescueFrequencyResp",
+      "required": [
+        "list"
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "description": "Enter JWT Bearer token **_only_**",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "apiKey": []
+    }
+  ]
+}

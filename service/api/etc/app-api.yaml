@@ -1,0 +1,30 @@
+Name: app-api
+Host: 0.0.0.0
+Port: 8888
+#web请求到此api服务的超时时间，单位毫秒（ms），100000ms=100s
+Timeout: 100000
+# 将请求体最大允许字节数从1MB改为1000MB，单位是字节
+MaxBytes: 1048576000
+DB:
+  # DataSource: root:123456@tcp(127.0.0.1:3306)/management_system?charset=utf8mb4&parseTime=true
+  # DataSource: root:123456@tcp(zxjing.cn:8036)/management_system?charset=utf8mb4&parseTime=true
+  DataSource: root:treehole2023@tcp(119.45.252.46:8036)/management_system?charset=utf8mb4&parseTime=true
+Redis:
+  # Host: zxjing.cn:8889
+  Host: 119.45.252.46:6379
+  Pass: "123456"
+  Type: node
+Cache:
+  # - Host: zxjing.cn:8889
+  - Host: 119.45.252.46:6379
+    Pass: "123456"
+JwtAuth:
+  AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0
+  AccessExpire: 604800  #单位s
+#单独用来传数据
+JwtAuthForRescue: 
+  AccessSecret: ae0536f9-4016-4606-8e13-5a19ed505da0
+  AccessExpire: 1800
+WxMiniConf:
+  AppId: wx8b456b9fba47330f
+  AppSecret: d3cfb45c8b56af3d05d3d254b2c99cc9
