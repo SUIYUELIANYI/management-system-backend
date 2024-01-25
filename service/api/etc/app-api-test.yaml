@@ -1,22 +1,22 @@
-Name: app-api
-Host: 0.0.0.0
-Port: 8888
+Name: 
+Host: 
+Port: 
 DB:
-  DataSource: root:123456@tcp(127.0.0.1:3306)/management_system?charset=utf8mb4&parseTime=true
+  DataSource: 
 Redis:
-  Host: 127.0.0.1:6379
-  Pass: "123456"
-  Type: node
+  Host: 
+  Pass: 
+  Type:
 Cache:
-  - Host: 127.0.0.1:6379
-    Pass: "123456"
+  - Host: 
+    Pass: 
 JwtAuth:
-  AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0
-  AccessExpire: 604800  #单位s
+  AccessSecret: 
+  AccessExpire: 
 #单独用来传数据
 JwtAuthForRescue: 
-  AccessSecret: ae0536f9-4016-4606-8e13-5a19ed505da0
-  AccessExpire: 1800
+  AccessSecret: 
+  AccessExpire: 
 WxMiniConf:
-  AppId: wx8b456b9fba47330f
-  AppSecret: d3cfb45c8b56af3d05d3d254b2c99cc9
+  AppId: 
+  AppSecret: 
