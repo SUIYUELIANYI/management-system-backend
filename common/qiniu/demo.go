@@ -20,10 +20,10 @@ var Q Qiniu
 
 func Load() {
 	Q = Qiniu{
-		AccessKey: "uFd-UmeuomebuvI8wzA9pHUDwq4ArbE-2hd1jGIE",
-		SecretKey: "ToZg6c9kknvBsSWZa2Nhb6Ag17-MakGZmFKe8HQQ",
-		Bucket:    "treeholerescue",
-		Domain:    "img-bed.shudong814.com",
+		AccessKey: "",
+		SecretKey: "",
+		Bucket:    "",
+		Domain:    "",
 	}
 }
 
@@ -46,7 +46,7 @@ func UploadQiniu(file *multipart.FileHeader) (string, error) {
 
 	// 配置参数
 	cfg := storage.Config{
-		Zone:          &storage.ZoneHuadongZheJiang2, // 设置机房（muxi用的ZoneHuanan，树洞用的ZoneHuadongZheJiang2)
+		Zone:          
 		UseCdnDomains: false,               // 是否使用CDN上传加速
 		UseHTTPS:      false,               // 是否使用https
 	}
